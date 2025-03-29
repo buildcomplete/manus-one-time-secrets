@@ -4,6 +4,8 @@ const path = require('path');
 // Define the storage directory - this will be where encrypted secrets are stored
 // Use absolute path to ensure it works in Docker environment
 const STORAGE_DIR = process.env.STORAGE_DIR || path.resolve('/usr/src/app/storage');
+
+// Export the storage directory directly to avoid reference issues
 module.exports.STORAGE_DIR = STORAGE_DIR;
 
 /**
@@ -11,7 +13,8 @@ module.exports.STORAGE_DIR = STORAGE_DIR;
  */
 const initStorage = async () => {
   try {
-    await fs.mkdir(module.exports.STORAGE_DIR, { recursive: true });
+    // Use the constant directly instead of the exported property
+    await fs.mkdir(STORAGE_DIR, { recursive: true });
   } catch (error) {
     console.error('Error initializing storage directory:', error);
     throw error;
@@ -26,7 +29,7 @@ const initStorage = async () => {
 const storeSecret = async (id, encryptedData) => {
   try {
     await initStorage();
-    const filePath = path.join(module.exports.STORAGE_DIR, id);
+    const filePath = path.join(STORAGE_DIR, id);
     await fs.writeFile(filePath, encryptedData);
   } catch (error) {
     console.error('Error storing secret:', error);
@@ -41,7 +44,7 @@ const storeSecret = async (id, encryptedData) => {
  */
 const secretExists = async (id) => {
   try {
-    const filePath = path.join(module.exports.STORAGE_DIR, id);
+    const filePath = path.join(STORAGE_DIR, id);
     await fs.access(filePath);
     return true;
   } catch (error) {
@@ -56,7 +59,7 @@ const secretExists = async (id) => {
  */
 const getSecret = async (id) => {
   try {
-    const filePath = path.join(module.exports.STORAGE_DIR, id);
+    const filePath = path.join(STORAGE_DIR, id);
     const data = await fs.readFile(filePath, 'utf8');
     return data;
   } catch (error) {
@@ -71,7 +74,7 @@ const getSecret = async (id) => {
  */
 const deleteSecret = async (id) => {
   try {
-    const filePath = path.join(module.exports.STORAGE_DIR, id);
+    const filePath = path.join(STORAGE_DIR, id);
     await fs.unlink(filePath);
   } catch (error) {
     // If the file doesn't exist, that's fine for this operation
