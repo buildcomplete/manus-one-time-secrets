@@ -5,8 +5,8 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-// Mock storage directory for testing
-const TEST_STORAGE_DIR = path.join(__dirname, '../test-storage');
+// Mock storage directory for testing - use absolute path for Docker compatibility
+const TEST_STORAGE_DIR = path.resolve('/usr/src/app/test-storage');
 
 // Create a direct import of the storage service
 const storageService = require('../src/storage/storageService');

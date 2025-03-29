@@ -2,8 +2,8 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // Define the storage directory - this will be where encrypted secrets are stored
-// Export the storage directory so it can be mocked in tests
-const STORAGE_DIR = path.join(__dirname, '../../storage');
+// Use absolute path to ensure it works in Docker environment
+const STORAGE_DIR = process.env.STORAGE_DIR || path.resolve('/usr/src/app/storage');
 module.exports.STORAGE_DIR = STORAGE_DIR;
 
 /**

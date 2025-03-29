@@ -9,8 +9,10 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
+      - STORAGE_DIR=/usr/src/app/storage
     volumes:
       - secret_storage:/usr/src/app/storage
+      - test_storage:/usr/src/app/test-storage
       - ../src:/usr/src/app/src
       - ../public:/usr/src/app/public
       - ../tests:/usr/src/app/tests
@@ -20,4 +22,6 @@ services:
 
 volumes:
   secret_storage:
+    driver: local
+  test_storage:
     driver: local

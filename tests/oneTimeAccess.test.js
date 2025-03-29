@@ -1,3 +1,8 @@
+// Mock the ID generator at the top level
+jest.mock('../src/utils/idGenerator', () => ({
+  generateId: jest.fn().mockReturnValue('test-secret-id')
+}));
+
 /**
  * Tests for the one-time access functionality
  */
@@ -5,15 +10,26 @@
 const request = require('supertest');
 const app = require('../src/index');
 const storageService = require('../src/storage/storageService');
+const idGenerator = require('../src/utils/idGenerator');
 
 // Mock the storage service
 jest.mock('../src/storage/storageService');
 
+// Set up default mock implementations before each test
+beforeEach(() => {
+  // Clear all mocks
+  jest.clearAllMocks();
+  
+  // Set up default mock implementations
+  storageService.initStorage.mockResolvedValue(undefined);
+  storageService.storeSecret.mockResolvedValue(undefined);
+  storageService.secretExists.mockResolvedValue(true);
+  storageService.getSecret.mockResolvedValue('mock-encrypted-data');
+  storageService.deleteSecret.mockResolvedValue(undefined);
+});
+
 describe('One-Time Access API', () => {
-  beforeEach(() => {
-    // Reset all mocks before each test
-    jest.resetAllMocks();
-  });
+  // We already reset mocks in the global beforeEach
 
   describe('POST /api/secrets', () => {
     test('should create a new secret and return its ID', async () => {
@@ -24,10 +40,8 @@ describe('One-Time Access API', () => {
       // Mock the storage service
       storageService.storeSecret.mockResolvedValue(undefined);
       
-      // Mock the ID generator (via module replacement in the test)
-      jest.mock('../src/utils/idGenerator', () => ({
-        generateId: jest.fn().mockReturnValue(secretId)
-      }));
+      // Set the ID generator mock return value for this test
+      idGenerator.generateId.mockReturnValue(secretId);
       
       // Make the request
       const response = await request(app)

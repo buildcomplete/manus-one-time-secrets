@@ -13,11 +13,23 @@ One-Time Secrets is a secure web application that allows users to share sensitiv
 5. Secrets can be shared via links that work only once
 6. Secrets are protected from being deleted by virus checkers that might invoke the link
 
-## Docker Development and Deployment
+## Development Options
 
-This project is designed to be run in Docker containers without requiring any local dependencies:
+### Recommended: Docker-based Development (No Local Dependencies)
 
-- [Docker Guide](DOCKER_GUIDE.md) - How to use Docker for development and production
+The recommended way to develop and test this application is using Docker, which requires **no local installation** of Node.js, npm, or any other dependencies:
+
+- [Docker Guide](DOCKER_GUIDE.md) - How to use Docker for development and testing
+
+With this approach, you only need Docker installed on your machine. All development and testing can be done using the provided scripts:
+- `./docker-dev.sh` - Run the application in development mode
+- `./docker-test.sh` - Run tests inside Docker
+
+### Alternative: Traditional Development
+
+If you prefer a traditional development approach using npm and Node.js directly:
+
+- [Traditional Development Guide](TRADITIONAL_DEV.md) - Development using npm and Node.js
 
 ## GitHub Actions Integration
 
