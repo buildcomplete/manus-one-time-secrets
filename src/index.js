@@ -22,6 +22,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+// Serve the secret viewing page
+app.get('/s/:id', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
 // Start server
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, '0.0.0.0', () => {
