@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * Initialize the application
    */
   const init = () => {
-    // Check if we're on a view page (URL has a hash fragment)
-    if (window.location.hash) {
+    // Check if we're on a view page (URL path starts with /s/)
+    if (window.location.pathname.startsWith('/s/')) {
       // We're viewing a secret
       showViewSecret();
     } else {
@@ -81,11 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const secretId = window.location.pathname.split('/').pop();
     const encryptionKey = window.location.hash.substring(1); // Remove the # character
 
+    console.log('Viewing secret with ID:', secretId, 'and key:', encryptionKey);
+
     // If we have a secret ID, try to retrieve it
-    if (secretId) {
+    if (secretId && encryptionKey) {
       retrieveSecret(secretId, encryptionKey);
     } else {
-      showError('Invalid secret link');
+      showError('Invalid secret link - missing ID or encryption key');
     }
   };
 
@@ -172,6 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   const retrieveSecret = async (secretId, encryptionKey) => {
     try {
+      console.log('Retrieving secret with ID:', secretId);
+      
       // Fetch the encrypted secret from the server
       const response = await fetch(`${API_URL}/${secretId}`);
       
@@ -182,12 +186,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = await response.json();
+      console.log('Retrieved encrypted data:', data);
       
       // Decrypt the secret with the key from the URL fragment
-      const decryptedSecret = await SecretEncryption.decryptData(
-        JSON.stringify(data.encryptedData), 
-        encryptionKey
-      );
+      let decryptedSecret;
+      try {
+        decryptedSecret = await SecretEncryption.decryptData(
+          typeof data.encryptedData === 'string' ? data.encryptedData : JSON.stringify(data.encryptedData), 
+          encryptionKey
+        );
+      } catch (decryptError) {
+        console.error('Decryption error:', decryptError);
+        throw new Error('Could not decrypt the secret. The encryption key may be invalid.');
+      }
       
       // Display the decrypted secret
       secretContent.textContent = decryptedSecret;

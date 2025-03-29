@@ -6,15 +6,15 @@
 echo "Running tests inside Docker container..."
 
 # Build the development Docker image if it doesn't exist
-docker-compose -f docker/docker-compose.dev.yml build
+docker build -t one-time-secrets-dev -f docker/Dockerfile.dev .
 
-# Create test storage directory in container
-docker-compose -f docker/docker-compose.dev.yml run --rm app mkdir -p /usr/src/app/test-storage
-
-# Set proper permissions
-docker-compose -f docker/docker-compose.dev.yml run --rm app chmod 777 /usr/src/app/test-storage
-
-# Run tests inside the container
-docker-compose -f docker/docker-compose.dev.yml run --rm app npm test
+# Create and run a container for testing
+docker run --rm \
+  -v "$(pwd):/usr/src/app" \
+  -w /usr/src/app \
+  -e NODE_ENV=test \
+  -e STORAGE_DIR=/usr/src/app/test-storage \
+  one-time-secrets-dev \
+  /bin/bash -c "mkdir -p /usr/src/app/test-storage && chmod 777 /usr/src/app/test-storage && npm test"
 
 echo "Tests completed!"

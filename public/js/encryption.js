@@ -76,8 +76,25 @@ const SecretEncryption = {
    */
   decryptData: async (encryptedJson, key) => {
     try {
+      console.log('Decrypting data with key:', key);
+      console.log('Encrypted JSON type:', typeof encryptedJson);
+      
       // Parse the encrypted JSON
-      const { encryptedData, iv } = JSON.parse(encryptedJson);
+      let parsedData;
+      try {
+        parsedData = JSON.parse(encryptedJson);
+        console.log('Successfully parsed JSON:', parsedData);
+      } catch (parseError) {
+        console.error('Error parsing JSON:', parseError);
+        throw new Error('Invalid encrypted data format');
+      }
+      
+      // Extract encrypted data and IV
+      const { encryptedData, iv } = parsedData;
+      if (!encryptedData || !iv) {
+        console.error('Missing required encryption fields:', parsedData);
+        throw new Error('Invalid encrypted data structure');
+      }
       
       // Convert key from base64 to array buffer
       const rawKey = Uint8Array.from(atob(key), c => c.charCodeAt(0));
@@ -109,11 +126,12 @@ const SecretEncryption = {
       
       // Decode the decrypted data
       const decryptedText = new TextDecoder().decode(decryptedBuffer);
+      console.log('Successfully decrypted data');
       
       return decryptedText;
     } catch (error) {
       console.error('Decryption error:', error);
-      throw new Error('Failed to decrypt data');
+      throw new Error('Failed to decrypt data: ' + error.message);
     }
   }
 };
