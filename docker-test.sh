@@ -8,14 +8,9 @@ echo "Running tests inside Docker container..."
 # Build the development Docker image if it doesn't exist
 docker build -t one-time-secrets-dev -f docker/Dockerfile.dev .
 
-# Create test storage directory locally
-mkdir -p test-storage
-chmod 777 test-storage
-
-# Run tests in the container
+# Create and run a container for testing
 docker run --rm \
-  -v "$(pwd):/usr/src/app" \
-  -w /usr/src/app \
+  -v "$(pwd)/test-storage:/usr/src/app/test-storage" \
   -e NODE_ENV=test \
   -e STORAGE_DIR=/usr/src/app/test-storage \
   one-time-secrets-dev \
