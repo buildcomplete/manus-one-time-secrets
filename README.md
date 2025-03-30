@@ -2,6 +2,8 @@
 
 A secure web application for sharing secrets that can only be read once.
 
+[![Test](https://github.com/buildcomplete/manus-one-time-secrets/actions/workflows/test.yml/badge.svg)](https://github.com/buildcomplete/manus-one-time-secrets/actions/workflows/test.yml)
+
 ## Overview
 
 One-Time Secrets is a secure web application that allows users to share sensitive information through one-time accessible links. The application ensures that:

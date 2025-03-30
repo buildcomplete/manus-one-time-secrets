@@ -18,5 +18,5 @@ RUN mkdir -p storage && chmod 777 storage
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Command to run the application in development mode
-CMD ["npm", "run", "dev"]
+# Set the default command for running tests
+CMD ["npm", "test"]
